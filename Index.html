@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffcc00 0%, #d40511 100%);
+    }
+
+    .wrapper {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #ffffff;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background: #ffcc00;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .header img {
+      max-height: 50px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    h1 {
+      color: #d40511;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      width: 70%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #d40511;
+      color: #fff;
+      border-radius: 4px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button.loading {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #f1f1f1;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #d40511;
+      transition: width 0.6s ease;
+    }
+
+    /* Timeline animation */
+    .timeline {
+      margin-top: 30px;
+      padding: 0 20px;
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .timeline.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step {
+      position: relative;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      background: #fff8e0;
+      border-left: 6px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      background: #ccc;
+      border-radius: 50%;
+    }
+
+    @keyframes pulse {
+      0% { background-color: #ffe8e8; }
+      50% { background-color: #ffd0d0; }
+      100% { background-color: #ffe8e8; }
+    }
+
+    .step.current {
+      border-left-color: #d40511;
+      background: #ffe8e8;
+      animation: pulse 2s infinite;
+    }
+
+    .step.current::before {
+      background: #d40511;
+      box-shadow: 0 0 8px #d40511;
+    }
+
+    .label {
+      font-weight: 600;
+      font-size: 18px;
+      color: #222;
+      margin-bottom: 4px;
+    }
+
+    .location {
+      font-size: 15px;
+      color: #555;
+    }
+
+    .timestamp {
+      font-size: 13px;
+      color: #777;
+      margin-top: 6px;
+    }
+
+    .error {
+      color: #d40511;
+      font-weight: bold;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #555;
+      padding: 16px;
+      border-top: 1px solid #e6e6e6;
+      text-align: center;
+    }
+
+    /* CSS checkmark (unchanged) */
+    .checkmark {
+      display: inline-block;
+      width: 14px;
+      height: 8px;
+      border-left: 3px solid green;
+      border-bottom: 3px solid green;
+      transform: rotate(-45deg);
+      margin-left: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div class="header">
+      <img src="https://www.dhl.com/content/dam/dhl/global/core/images/logos/dhl-logo.svg" alt="DHL Express Logo">
+    </div>
+
+    <div class="content">
+      <h1>Track Your Shipment</h1>
+
+      <div class="form">
+        <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
+        <br>
+        <button class="button" onclick="checkTracking()">Track</button>
+        <div id="error" class="error">Invalid tracking number</div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div id="progressContainer" class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <!-- Timeline -->
+      <div id="timeline" class="timeline">
+  <div class="step">
+    <div class="label">Shipment Registered <span class="checkmark"></span></div>
+    <div class="location">Damascus, Syria</div>
+    <div class="timestamp">May 16, 2026, 2:24 PM GMT+3</div>
+  </div>
+
+  <div class="step current">
+    <div class="label">In Transit</div>
+    <div class="location">Departed Facility</div>
+    <div class="timestamp">May 16, 2026, 11:01 PM GMT+3</div>
+  </div>
+
+  <div class="step">
+    <div class="label">Out for Delivery</div>
+    <div class="location">Soledad de Graciano Sánchez, S.L.P., Mexico</div>
+    <div class="timestamp">Pending</div>
+  </div>
+
+  <div class="step">
+    <div class="label">Delivered</div>
+    <div class="location">
+      República de Argentina 212<br>
+      San Francisco, 78435<br>
+      Soledad de Graciano Sánchez, S.L.P.<br>
+      Mexico
+    </div>
+    <div class="timestamp">Pending</div>
+  </div>
+</div>
+</div>
+
+    <div class="footer">
+      © Diplomatic Services
+    </div>
+  </div>
+
+  <script>
+    function checkTracking() {
+      const input = document.getElementById("trackingInput").value.trim();
+      const timeline = document.getElementById("timeline");
+      const error = document.getElementById("error");
+      const button = document.querySelector(".button");
+      const progressContainer = document.getElementById("progressContainer");
+      const progressBar = document.getElementById("progressBar");
+
+      const allowedNumber = "6086911246";
+
+      // Reset UI
+      timeline.classList.remove("show");
+      timeline.style.display = "none";
+      progressContainer.style.display = "none";
+      error.style.display = "none";
+
+      // Loading state
+      button.classList.add("loading");
+      button.disabled = true;
+      button.textContent = "Checking...";
+
+      setTimeout(() => {
+        if (input === allowedNumber) {
+          progressContainer.style.display = "block";
+          progressBar.style.width = "10%";
+
+          timeline.style.display = "block";
+          setTimeout(() => timeline.classList.add("show"), 50);
+        } else {
+          error.style.display = "block";
+        }
+
+        // Restore button
+        button.classList.remove("loading");
+        button.disabled = false;
+        button.textContent = "Track";
+      }, 1200);
+    }
+  </script>
+
+  <!-- Tidio widget -->
+  <script src="//code.tidio.co/voxrt025ls0t376jgkhtpghvi2gnblbx.js" async></script>
+
+</body>
+</html>
