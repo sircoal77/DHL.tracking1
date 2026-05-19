@@ -221,13 +221,13 @@
     <div class="timestamp">May 16, 2026, 8:14 PM GMT-4</div>
   </div>
 
-  <div class="step current">
-    <div class="label">In Transit</div>
+  <div class="step">
+    <div class="label">In Transit <span class="checkmark"></span></div>
     <div class="location">Departed Facility</div>
     <div class="timestamp">May 17, 2026, 2:00 AM GMT-4</div>
   </div>
 
-  <div class="step">
+  <div class="step current">
     <div class="label">Customs Clearance</div>
     <div class="location">Augusto C. Sandino International Airport, Managua, Nicaragua</div>
     <div class="timestamp">Pending</div>
@@ -282,7 +282,7 @@
       setTimeout(() => {
         if (input === allowedNumber) {
           progressContainer.style.display = "block";
-          progressBar.style.width = "79%";
+          progressBar.style.width = "89%";
 
           timeline.style.display = "block";
           setTimeout(() => timeline.classList.add("show"), 50);
